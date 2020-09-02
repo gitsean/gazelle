@@ -6,7 +6,6 @@
       <div class="dropbox">
         <input
           type="file"
-          multiple
           :name="uploadFieldName"
           :disabled="isSaving"
           @change="
