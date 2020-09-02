@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <form enctype="multipart/form-data" novalidate v-if="isInitial || isSaving">
-      <!-- v-if="isInitial || isSaving" -->
       <h1>Upload images</h1>
       <div class="dropbox">
         <input

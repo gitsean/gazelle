@@ -13,7 +13,6 @@ describe("Home.vue", () => {
   });
 
   it("contains uploader component", () => {
-    expect(wrapper.name()).toBe("Home");
     expect(wrapper.findComponent({ name: "Uploader" }).exists()).toBe(true);
   });
 });
