@@ -39,7 +39,7 @@ export default {
       uploadedFiles: [],
       uploadError: null,
       currentStatus: null,
-      uploadFieldName: "csv",
+      uploadFieldName: "file",
     };
   },
   computed: {
