@@ -29,4 +29,24 @@ describe("Uploader.vue", () => {
     const input = wrapper.find("input");
     expect(input.attributes().multiple).toBe(undefined);
   });
+  it("shows success message upon successful upload", async () => {
+    await wrapper.setData({
+      uploadedFiles: ["file.csv"],
+      uploadError: false,
+      currentStatus: 2,
+    });
+
+    const success = wrapper.find("h2");
+    expect(success.text()).toMatch("Uploaded file successfully.");
+  });
+  it("shows failed message upon failed upload", async () => {
+    await wrapper.setData({
+      uploadedFiles: null,
+      uploadError: true,
+      currentStatus: 3,
+    });
+
+    const success = wrapper.find("h2");
+    expect(success.text()).toMatch("Upload failed.");
+  });
 });
