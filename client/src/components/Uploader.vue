@@ -11,7 +11,7 @@
             filesChange($event.target.name, $event.target.files);
             fileCount = $event.target.files.length;
           "
-          accept="*"
+          accept="csv"
           class="input-file"
         />
         <p v-if="isInitial">
