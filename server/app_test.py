@@ -25,6 +25,6 @@ def test_uploader(app, client):
     print(res.data)
     parsed = json.loads(res.data)
     assert len(parsed) == file_count
-    if(glob.glob(f'./{app.config["UPLOAD_FOLDER"]}delete.csv')):
-        os.remove(f'./{app.config["UPLOAD_FOLDER"]}delete.csv')
+    if glob.glob(test_file):
+        os.remove(test_file)
     
