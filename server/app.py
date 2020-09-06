@@ -2,6 +2,7 @@ import os
 from flask import Flask, jsonify, request, send_file, abort
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
+import glob
 
 
 # configuration
@@ -42,21 +43,24 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
-# sanity check route
 @app.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify('pong!')
 
-
-@app.route('/uploader', methods=['POST'])
+@app.route('/uploader', methods=['POST', 'GET'])
 def upload_file():
-    if 'file' not in request.files:
-        raise InvalidUsage('No file found in request', status_code=406)
-    f = request.files['file']
-    if not allowed_file(f.filename):
-        raise InvalidUsage('Invalid file extension', status_code=415)
-    f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
-    return f.filename
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            raise InvalidUsage('No file found in request', status_code=406)
+        f = request.files['file']
+        if not allowed_file(f.filename):
+            raise InvalidUsage('Invalid file extension', status_code=415)
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))
+        return f.filename
+    else:
+        file_paths = glob.glob(f'./{app.config["UPLOAD_FOLDER"]}*.csv')
+        files = [ x.split('/')[-1:][0] for x in file_paths ]
+        return jsonify(files)
 
 @app.route('/download/<filename>', methods = ['GET'])
 def download_file(filename):
