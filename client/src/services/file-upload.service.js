@@ -11,7 +11,6 @@ async function upload(formData) {
 async function uploads() {
   const url = `${BASE_URL}/uploader`;
   const filesRequest = await axios.get(url);
-  console.log(filesRequest.data);
   return filesRequest.data;
 }
 

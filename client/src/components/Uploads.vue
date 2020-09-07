@@ -3,6 +3,7 @@
     <tr v-for="(file, index) in files" :key="index">
       <td>{{ file }}</td>
       <td><button :click="fileLink[index]" download>Download</button></td>
+      <td><button :click="displayCsv[index]" download>Display</button></td>
     </tr>
   </table>
 
@@ -41,6 +42,10 @@ export default {
     },
     fileLink(file) {
       // Call server to download file
+      return file;
+    },
+    displayCsv(file) {
+      //render the csv in a table on-screen
       return file;
     },
   },
