@@ -8,4 +8,10 @@ async function upload(formData) {
   return { url: `${BASE_URL}/download/${uploaded.data}` };
 }
 
-export { upload };
+async function uploads() {
+  const url = `${BASE_URL}/uploader`;
+  const files = await axios.get(url);
+  return files;
+}
+
+export { upload, uploads };

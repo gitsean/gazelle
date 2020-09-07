@@ -1,9 +1,11 @@
 <template>
-  <ul v-if="hasFiles && isLoaded">
-    <li v-for="file in files" :key="index">
-      {{ file }}
-    </li>
-  </ul>
+  <table v-if="hasFiles && isLoaded">
+    <tr v-for="(file, index) in files" :key="index">
+      <td>{{ file }}</td>
+      <td><button :click="fileLink[index]" download>Download</button></td>
+    </tr>
+  </table>
+
   <p v-else-if="!hasFiles && isLoading">Getting files...</p>
   <p v-else-if="!hasFiles && isLoaded">No files have been uploaded.</p>
   <p v-else-if="isFailed">Something went wrong.</p>
@@ -36,6 +38,10 @@ export default {
     },
     isFailed() {
       return this.currentStatus === STATUS_ERROR;
+    },
+    fileLink(file) {
+      // Call server to download file
+      return file;
     },
   },
   methods: {

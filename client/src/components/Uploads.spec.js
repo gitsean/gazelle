@@ -19,8 +19,8 @@ afterEach(() => {
 });
 
 describe("Uploads.vue", () => {
-  it("list of files shows when files are loaded", () => {
-    const list = wrapper.find("ul");
+  it("table of files shows when files are loaded", () => {
+    const list = wrapper.find("table");
     expect(list.exists()).toBe(true);
   });
   it("message shows when loading", async () => {
