@@ -1,8 +1,8 @@
 <template>
   <table v-if="hasFiles && isLoaded">
     <tr v-for="(file, index) in files" :key="index">
-      <td>{{ file }}</td>
-      <td><button :click="fileLink[index]" download>Download</button></td>
+      <td>{{ file.name }}</td>
+      <td><a :href="file.url" download>Download</a></td>
       <td><button :click="displayCsv[index]" download>Display</button></td>
     </tr>
   </table>
