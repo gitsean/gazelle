@@ -15,4 +15,7 @@ describe("Home.vue", () => {
   it("contains uploader component", () => {
     expect(wrapper.findComponent({ name: "Uploader" }).exists()).toBe(true);
   });
+  it("contains uploads component", () => {
+    expect(wrapper.findComponent({ name: "Uploads" }).exists()).toBe(true);
+  });
 });
