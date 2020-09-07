@@ -51,7 +51,7 @@ export default {
 
       uploads()
         .then((f) => {
-          this.uploadedFiles = f;
+          this.files = f;
           this.currentStatus = STATUS_LOADED;
         })
         .catch((err) => {
@@ -59,6 +59,9 @@ export default {
           this.currentStatus = STATUS_ERROR;
         });
     },
+  },
+  mounted() {
+    this.get();
   },
 };
 </script>

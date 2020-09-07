@@ -7,8 +7,8 @@ beforeEach(() => {
   wrapper = shallowMount(Uploads, {
     data() {
       return {
-        files: ["justfile.csv"],
-        currentStatus: 1,
+        files: [],
+        currentStatus: null,
       };
     },
   });
@@ -19,7 +19,12 @@ afterEach(() => {
 });
 
 describe("Uploads.vue", () => {
-  it("table of files shows when files are loaded", () => {
+  it("table of files shows when files are loaded", async () => {
+    await wrapper.setData({
+      files: ["justfile.csv"],
+      currentStatus: 1,
+    });
+
     const list = wrapper.find("table");
     expect(list.exists()).toBe(true);
   });

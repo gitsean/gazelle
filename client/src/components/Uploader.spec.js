@@ -33,7 +33,7 @@ describe("Uploader.vue", () => {
 
   it("input allows only CSV file type", () => {
     const input = wrapper.find("input");
-    expect(input.attributes().accept).toBe("csv");
+    expect(input.attributes().accept).toBe(".csv");
   });
 
   it("shows success message upon successful upload", async () => {
