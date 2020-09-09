@@ -27,6 +27,7 @@ async function records(fname, page) {
   const url = `${BASE_URL}/table/${fname}?page=${page}`;
   const recordsRequest = await axios.get(url);
   let { records, total, stats } = recordsRequest.data;
+  stats = JSON.parse(stats);
   records = JSON.parse(records).map((x) => {
     const { guid, ...rest } = x;
     guid;
@@ -34,4 +35,5 @@ async function records(fname, page) {
   });
   return { records, total, stats };
 }
+
 export { upload, uploads, records };

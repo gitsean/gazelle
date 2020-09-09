@@ -17,21 +17,26 @@
     <p v-else-if="!hasFiles && isLoaded">No files have been uploaded.</p>
     <p v-else-if="isFailed">Something went wrong.</p>
 
-    <h2>File Contents</h2>
     <div>
-      <div v-if="needsPages">
-        <nav aria-label="Page navigation">
-          <ul class="pagination">
-            <li class="page-item">
-              <a v-on:click="getPage('down')" class="page-link" href="#">Previous</a>
-            </li>
-            <li class="page-item">
-              <a v-on:click="getPage('up')" class="page-link" href="#">Next</a>
-            </li>
-          </ul>
-        </nav>
+      <div v-if="isWaiting">Retrieving records...</div>
+      <div v-else-if="isRecords">
+        <h2>Top five years</h2>
+        <b-table :items="stats"></b-table>
+        <h2>File Contents</h2>
+        <div v-if="needsPages">
+          <nav aria-label="Page navigation">
+            <ul class="pagination">
+              <li class="page-item">
+                <a v-on:click="getPage('down')" class="page-link" href="#">Previous</a>
+              </li>
+              <li class="page-item">
+                <a v-on:click="getPage('up')" class="page-link" href="#">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <b-table striped hover :items="items"></b-table>
       </div>
-      <b-table v-if="isRecords" striped hover :items="items"></b-table>
     </div>
   </div>
 </template>
@@ -44,7 +49,8 @@ const STATUS_LOADING = 0,
   STATUS_LOADED = 1,
   STATUS_ERROR = 2,
   STATUS_TABLE_RECORDS = 0,
-  STATUS_NO_TABLE_RECORDS = 1,
+  STATUS_WAITING_TABLE_RECORDS = 1,
+  STATUS_NO_TABLE_RECORDS = 2,
   MAX_ITEMS = 100;
 
 export default {
@@ -58,7 +64,8 @@ export default {
       items: [],
       file: null,
       totalItems: 0,
-      page: 1
+      page: 1,
+      stats: null
     };
   },
   computed: {
@@ -81,13 +88,16 @@ export default {
     isRecords() {
       return this.tableStatus === STATUS_TABLE_RECORDS;
     },
+    isWaiting() {
+      return this.tableStatus === STATUS_WAITING_TABLE_RECORDS;
+    },
     needsPages() {
       return this.totalItems > MAX_ITEMS;
     }
   },
   methods: {
     getPage(dir) {
-      this.tableStatus = STATUS_NO_TABLE_RECORDS;
+      this.tableStatus = STATUS_WAITING_TABLE_RECORDS;
       this.page = dir == "down" ? this.page - 1 : this.page + 1;
       if (this.page < 0) {
         this.page = 0;
@@ -99,23 +109,26 @@ export default {
         .then(f => {
           this.items = f.records;
           this.totalItems = f.total;
+          this.stats = f.stats;
           this.tableStatus = STATUS_TABLE_RECORDS;
         })
         .catch(err => {
+          this.tableStatus = STATUS_NO_TABLE_RECORDS;
           console.error(`Something unexpected when getting records\n ${err}`);
         });
     },
     getItems(fname) {
-      this.tableStatus = STATUS_NO_TABLE_RECORDS;
+      this.tableStatus = STATUS_WAITING_TABLE_RECORDS;
       this.file = fname;
       records(fname)
         .then(f => {
-          console.log(f);
           this.items = f.records;
           this.totalItems = f.total;
+          this.stats = f.stats;
           this.tableStatus = STATUS_TABLE_RECORDS;
         })
         .catch(err => {
+          this.tableStatus = STATUS_NO_TABLE_RECORDS;
           console.error(`Something unexpected when getting records\n ${err}`);
         });
     },
