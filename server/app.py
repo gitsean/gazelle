@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request, send_file, abort
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 import glob
+import pandas as pd
 
 
 # configuration
@@ -17,6 +18,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
+
 
 class InvalidUsage(Exception):
     status_code = 400
@@ -33,9 +35,11 @@ class InvalidUsage(Exception):
         rv['message'] = self.message
         return rv
 
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
@@ -43,9 +47,11 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
+
 @app.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify('pong!')
+
 
 @app.route('/uploader', methods=['POST', 'GET'])
 def upload_file():
@@ -59,13 +65,23 @@ def upload_file():
         return f.filename
     else:
         file_paths = glob.glob(f'./{app.config["UPLOAD_FOLDER"]}*.csv')
-        files = [ x.split('/')[-1:][0] for x in file_paths ]
+        files = [x.split('/')[-1:][0] for x in file_paths]
         return jsonify(files)
 
-@app.route('/download/<filename>', methods = ['GET'])
+
+@app.route('/download/<filename>', methods=['GET'])
 def download_file(filename):
 
-	return send_file(os.path.join(app.config['UPLOAD_FOLDER'], filename), as_attachment=True)
+    return send_file(os.path.join(app.config['UPLOAD_FOLDER'], filename), as_attachment=True)
+
+
+@app.route('/table/<filename>', methods=['GET'])
+def get_table(filename):
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    df = pd.read_csv(file_path)
+    records = df.head().to_json(orient="records")
+    return records
+
 
 if __name__ == '__main__':
     app.run()
