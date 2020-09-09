@@ -1,15 +1,21 @@
 <template>
-  <table v-if="hasFiles && isLoaded">
-    <tr v-for="(file, index) in files" :key="index">
-      <td>{{ file.name }}</td>
-      <td><a :href="file.url" download>Download</a></td>
-      <td><button :click="displayCsv[index]" download>Display</button></td>
-    </tr>
-  </table>
+  <div class="container">
+    <h2>Uploaded Files</h2>
+    <table class="table" v-if="hasFiles && isLoaded">
+      <tr v-for="(file, index) in files" :key="index">
+        <td>{{ file.name }}</td>
+        <td><a :href="file.url" download>Download</a></td>
+        <td><button :click="displayCsv[index]" download>Display</button></td>
+      </tr>
+    </table>
 
-  <p v-else-if="!hasFiles && isLoading">Getting files...</p>
-  <p v-else-if="!hasFiles && isLoaded">No files have been uploaded.</p>
-  <p v-else-if="isFailed">Something went wrong.</p>
+    <p v-else-if="!hasFiles && isLoading">Getting files...</p>
+    <p v-else-if="!hasFiles && isLoaded">No files have been uploaded.</p>
+    <p v-else-if="isFailed">Something went wrong.</p>
+
+    <h2>File Contents</h2>
+    <b-table striped hover :items="items"></b-table>
+  </div>
 </template>
 
 <script>
@@ -25,6 +31,7 @@ export default {
     return {
       files: [],
       currentStatus: STATUS_LOADING,
+      items: [],
     };
   },
   computed: {
@@ -71,4 +78,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+h2 {
+  margin-top: 40px;
+}
+</style>
