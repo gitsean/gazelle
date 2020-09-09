@@ -5,7 +5,7 @@
       <tr v-for="(file, index) in files" :key="index">
         <td>{{ file.name }}</td>
         <td><a :href="file.url" download>Download</a></td>
-        <td><button :click="displayCsv[index]" download>Display</button></td>
+        <td><button v-on:click="getItems(file.name)">Display</button></td>
       </tr>
     </table>
 
@@ -14,23 +14,30 @@
     <p v-else-if="isFailed">Something went wrong.</p>
 
     <h2>File Contents</h2>
-    <b-table striped hover :items="items"></b-table>
+    <div>
+      <b-table v-if="isRecords" striped hover :items="items"></b-table>
+    </div>
   </div>
 </template>
 
 <script>
-import { uploads } from "@/services/file-upload.service";
+import { uploads, records } from "@/services/file-upload.service";
+import { BTable } from "bootstrap-vue";
 
 const STATUS_LOADING = 0,
   STATUS_LOADED = 1,
-  STATUS_ERROR = 2;
+  STATUS_ERROR = 2,
+  STATUS_TABLE_RECORDS = 0,
+  STATUS_NO_TABLE_RECORDS = 1;
 
 export default {
   name: "Uploads",
+  components: { BTable },
   data() {
     return {
       files: [],
       currentStatus: STATUS_LOADING,
+      tableStatus: STATUS_NO_TABLE_RECORDS,
       items: [],
     };
   },
@@ -51,13 +58,23 @@ export default {
       // Call server to download file
       return file;
     },
-    displayCsv(file) {
-      //render the csv in a table on-screen
-      return file;
+    isRecords() {
+      return this.tableStatus === STATUS_TABLE_RECORDS;
     },
   },
   methods: {
-    get() {
+    getItems(fname) {
+      this.tableStatus = STATUS_NO_TABLE_RECORDS;
+      records(fname)
+        .then((f) => {
+          this.items = f;
+          this.tableStatus = STATUS_TABLE_RECORDS;
+        })
+        .catch((err) => {
+          console.error(`Something unexpected when getting records\n ${err}`);
+        });
+    },
+    getUploads() {
       // get files from server
       this.currentStatus = STATUS_LOADING;
 
@@ -73,7 +90,7 @@ export default {
     },
   },
   mounted() {
-    this.get();
+    this.getUploads();
   },
 };
 </script>

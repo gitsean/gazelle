@@ -79,7 +79,7 @@ def download_file(filename):
 def get_table(filename):
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     df = pd.read_csv(file_path)
-    records = df.head().to_json(orient="records")
+    records = df[:100].to_json(orient="records")
     return records
 
 

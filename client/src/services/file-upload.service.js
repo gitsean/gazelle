@@ -22,4 +22,9 @@ async function uploads() {
   return fileNamesAndUrls;
 }
 
-export { upload, uploads };
+async function records(fname) {
+  const url = `${BASE_URL}/table/${fname}`;
+  const recordsRequest = await axios.get(url);
+  return recordsRequest.data;
+}
+export { upload, uploads, records };
