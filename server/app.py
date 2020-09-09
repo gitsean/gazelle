@@ -81,16 +81,23 @@ def get_table(filename, page = 1):
     size = request.args.get('size', default = 100, type = int)
     begin = (page - 1) * size
     end = begin + size
-    
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     df = pd.read_csv(file_path)
+    df['state'] = df['state'].fillna('BLANK')
+    df['date'] = pd.to_datetime(df['date'])
     if end > len(df):
         end = len(df)
         begin = end - size
     if begin < 0:
         begin = 0
     records = df[begin:end].to_json(orient="records")
-    return jsonify({'records': records, 'total': len(df.index)})
+    grouped = df.groupby([df['date'].dt.year]).agg({'count'})
+    trimmed = grouped.loc[0:, ('date', 'count')]
+    full = pd.DataFrame(grouped.index)
+    full['count'] = trimmed.reset_index()['date', 'count']
+    full.sort_values(by='count', inplace=True, ascending=False)
+    stats = full[0:5].to_json(orient="records")
+    return jsonify({'records': records, 'total': len(df.index), 'stats': stats})
 
 
 if __name__ == '__main__':
