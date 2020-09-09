@@ -40,7 +40,11 @@ def test_uploader(app, client):
 
 def test_table(app, client):
     res = client.get('/table/delete.csv')
-    assert len(json.loads(res.data)) == 1
+    res_json = json.loads(res.data)
+    recs = json.loads(res_json['records'])
+    total = res_json['total']
+    assert len(recs) == 1
+    assert total == 1
 
 
 def test_teardown(app, client):

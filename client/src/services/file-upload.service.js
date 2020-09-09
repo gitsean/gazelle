@@ -22,9 +22,16 @@ async function uploads() {
   return fileNamesAndUrls;
 }
 
-async function records(fname) {
-  const url = `${BASE_URL}/table/${fname}`;
+async function records(fname, page) {
+  page = page ? page : 1;
+  const url = `${BASE_URL}/table/${fname}?page=${page}`;
   const recordsRequest = await axios.get(url);
-  return recordsRequest.data;
+  let { records, total } = recordsRequest.data;
+  records = JSON.parse(records).map((x) => {
+    const { guid, ...rest } = x;
+    guid;
+    return rest;
+  });
+  return { records, total };
 }
 export { upload, uploads, records };

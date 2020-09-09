@@ -76,11 +76,21 @@ def download_file(filename):
 
 
 @app.route('/table/<filename>', methods=['GET'])
-def get_table(filename):
+def get_table(filename, page = 1):
+    page = request.args.get('page', default = 1, type = int)
+    size = request.args.get('size', default = 100, type = int)
+    begin = (page - 1) * size
+    end = begin + size
+    
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     df = pd.read_csv(file_path)
-    records = df[:100].to_json(orient="records")
-    return records
+    if end > len(df):
+        end = len(df)
+        begin = end - size
+    if begin < 0:
+        begin = 0
+    records = df[begin:end].to_json(orient="records")
+    return jsonify({'records': records, 'total': len(df.index)})
 
 
 if __name__ == '__main__':
