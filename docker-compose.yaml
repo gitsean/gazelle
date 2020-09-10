@@ -1,0 +1,23 @@
+version: "3.1"
+services:
+  client:
+    build: ./client
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./client:/app
+    networks:
+      - some-net
+
+  server:
+    build: ./server
+    ports:
+      - "5000:8080"
+    volumes:
+      - ./server:/code
+    networks:
+      - some-net
+
+networks:
+  some-net:
+    driver: bridge
